@@ -1,7 +1,7 @@
 {
   "publisher": "HuggingFace",
-  "name": "huggingface-vscode",
-  "version": "0.0.38",
+  "name": "huggingface-vscode-latexonly",
+  "version": "0.0.39",
   "displayName": "HF Code Autocomplete",
   "description": "AI Autocomplete for OSS code-gen models",
   "icon": "small_logo.png",
@@ -11,8 +11,7 @@
     "color": "#100f11",
     "theme": "dark"
   },
-  "badges": [
-    {
+  "badges": [{
       "url": "https://img.shields.io/github/stars/huggingface/huggingface-vscode?style=social",
       "description": "Star huggingface-vscode on Github",
       "href": "https://github.com/huggingface/huggingface-vscode"
@@ -173,8 +172,7 @@
     }
   },
   "contributes": {
-    "commands": [
-      {
+    "commands": [{
         "command": "HuggingFaceCode::setApiToken",
         "title": "Hugging Face Code: Set API token"
       },
@@ -187,72 +185,69 @@
         "title": "Hugging Face Code: Open project GitHub"
       }
     ],
-    "configuration": [
-      {
-        "title": "Hugging Face Code",
-        "properties": {
-          "HuggingFaceCode.configTemplate": {
-            "type": "string",
-            "enum": ["bigcode/starcoder", "codellama/CodeLlama-13b-hf", "Phind/Phind-CodeLlama-34B-v2", "WizardLM/WizardCoder-Python-34B-V1.0", "Custom"],
-            "default": "bigcode/starcoder",
-            "description": "Choose an option from the dropdown."
+    "configuration": [{
+      "title": "Hugging Face Code",
+      "properties": {
+        "HuggingFaceCode.configTemplate": {
+          "type": "string",
+          "enum": ["bigcode/starcoder", "codellama/CodeLlama-13b-hf", "Phind/Phind-CodeLlama-34B-v2", "WizardLM/WizardCoder-Python-34B-V1.0", "Custom"],
+          "default": "bigcode/starcoder",
+          "description": "Choose an option from the dropdown."
+        },
+        "HuggingFaceCode.modelIdOrEndpoint": {
+          "type": "string",
+          "default": "bigcode/starcoder",
+          "description": "Supply huggingface model id (ex: `bigcode/starcoder`) or custom endpoint (ex: https://bigcode-large-xl.eu.ngrok.io/generate) to which request will be sent to. When huggingface model id is supplied, hugging face API inference will be used."
+        },
+        "HuggingFaceCode.isFillMode": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether to send to inference server: codes that are on top of cursor only (isFillMode=false) OR codes that are both above & below the cursor (isFillMode=true)"
+        },
+        "HuggingFaceCode.autoregressiveModeTemplate": {
+          "type": "string",
+          "default": "[prefix]",
+          "description": "Token `[prefix]` is replaced by contents of a text file from the beginning to the cursor. Token `[suffix]` is replaced by contents of a text file from the cursor to the end. So you can provide your own format template for ex: `<s>[prefix]</s>`"
+        },
+        "HuggingFaceCode.fillModeTemplate": {
+          "type": "string",
+          "default": "<fim_prefix>[prefix]<fim_suffix>[suffix]<fim_middle>",
+          "description": "Token `[prefix]` is replaced by contents of a text file from the beginning to the cursor. Token `[suffix]` is replaced by contents of a text file from the cursor to the end. So you can provide your own format template for ex: `<start>[prefix]<fill>[suffix]<middle>`"
+        },
+        "HuggingFaceCode.temperature": {
+          "type": "float",
+          "default": 0.2,
+          "description": "Sampling temperature"
+        },
+        "HuggingFaceCode.maxNewTokens": {
+          "type": "integer",
+          "default": 60,
+          "description": "Max number of new tokens to be generated. The accepted range is [50-500] both ends inclusive. Be warned that the latency of a request will increase with higher number."
+        },
+        "HuggingFaceCode.stopTokens": {
+          "type": "array",
+          "items": {
+            "type": "string"
           },
-          "HuggingFaceCode.modelIdOrEndpoint": {
-            "type": "string",
-            "default": "bigcode/starcoder",
-            "description": "Supply huggingface model id (ex: `bigcode/starcoder`) or custom endpoint (ex: https://bigcode-large-xl.eu.ngrok.io/generate) to which request will be sent to. When huggingface model id is supplied, hugging face API inference will be used."
+          "default": ["<|endoftext|>"],
+          "description": "(Optional) Stop tokens"
+        },
+        "HuggingFaceCode.tokensToClear": {
+          "type": "array",
+          "items": {
+            "type": "string"
           },
-          "HuggingFaceCode.isFillMode": {
-            "type": "boolean",
-            "default": true,
-            "description": "Whether to send to inference server: codes that are on top of cursor only (isFillMode=false) OR codes that are both above & below the cursor (isFillMode=true)"
-          },
-          "HuggingFaceCode.autoregressiveModeTemplate": {
-            "type": "string",
-            "default": "[prefix]",
-            "description": "Token `[prefix]` is replaced by contents of a text file from the beginning to the cursor. Token `[suffix]` is replaced by contents of a text file from the cursor to the end. So you can provide your own format template for ex: `<s>[prefix]</s>`"
-          },
-          "HuggingFaceCode.fillModeTemplate": {
-            "type": "string",
-            "default": "<fim_prefix>[prefix]<fim_suffix>[suffix]<fim_middle>",
-            "description":  "Token `[prefix]` is replaced by contents of a text file from the beginning to the cursor. Token `[suffix]` is replaced by contents of a text file from the cursor to the end. So you can provide your own format template for ex: `<start>[prefix]<fill>[suffix]<middle>`"
-          },
-          "HuggingFaceCode.temperature": {
-            "type": "float",
-            "default": 0.2,
-            "description": "Sampling temperature"
-          },
-          "HuggingFaceCode.maxNewTokens": {
-            "type": "integer",
-            "default": 60,
-            "description": "Max number of new tokens to be generated. The accepted range is [50-500] both ends inclusive. Be warned that the latency of a request will increase with higher number."
-          },
-          "HuggingFaceCode.stopTokens": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "default": ["<|endoftext|>"],
-            "description": "(Optional) Stop tokens"
-          },
-          "HuggingFaceCode.tokensToClear": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "default": ["<fim_middle>"],
-            "description": "(Optional) Tokens that should be cleared from the resulting output. For example, in FIM mode, one usually wants to clear FIM token from resulting outout."
-          },
-          "HuggingFaceCode.attributionWindowSize": {
-            "type": "integer",
-            "default": 250,
-            "description": "Number of characters to scan for code attribution"
-          }
+          "default": ["<fim_middle>"],
+          "description": "(Optional) Tokens that should be cleared from the resulting output. For example, in FIM mode, one usually wants to clear FIM token from resulting outout."
+        },
+        "HuggingFaceCode.attributionWindowSize": {
+          "type": "integer",
+          "default": 250,
+          "description": "Number of characters to scan for code attribution"
         }
       }
-    ],
-    "keybindings": [
-      {
+    }],
+    "keybindings": [{
         "key": "cmd+shift+l",
         "command": "editor.action.inlineSuggest.trigger"
       },

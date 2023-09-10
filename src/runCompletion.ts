@@ -156,7 +156,7 @@ export function getFileNameWithExtension(document: TextDocument): string {
 }
 
 function clipMaxNewTokens(maxNewTokens: number): number {
-  const MIN = 50;
-  const MAX = 500;
+  const MIN = 1;
+  const MAX = 1024;
   return Math.min(Math.max(maxNewTokens, MIN), MAX);
 }

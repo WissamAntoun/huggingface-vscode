@@ -1,5 +1,5 @@
 import { Position, Range, TextDocument, WorkspaceConfiguration, workspace, window, env, Uri } from "vscode";
-import {URL} from "url";
+import { URL } from "url";
 import fetch from "node-fetch";
 import type { Config as HFCodeConfig } from "./configTemplates"
 import { PREFIX, SUFFIX } from "./configTemplates"
@@ -21,13 +21,19 @@ export default async function runCompletion(
   timeout?: number,
   currentSuggestionText = ""
 ): Promise<AutocompleteResult | null | undefined> {
+
+  // check if the document is a latex document
+  if (document.languageId !== "latex" && document.languageId !== "tex") {
+    return;
+  }
+
   setLoadingStatus(FULL_BRAND_REPRESENTATION);
   const offset = document.offsetAt(position);
   const beforeStartOffset = Math.max(0, offset - CHAR_LIMIT);
   const afterEndOffset = offset + CHAR_LIMIT;
   const beforeStart = document.positionAt(beforeStartOffset);
   const afterEnd = document.positionAt(afterEndOffset);
-  const prefix =  document.getText(new Range(beforeStart, position)) + currentSuggestionText;
+  const prefix = document.getText(new Range(beforeStart, position)) + currentSuggestionText;
   const suffix = document.getText(new Range(position, afterEnd));
 
   const config = workspace.getConfiguration("HuggingFaceCode") as WorkspaceConfiguration & HFCodeConfig;
@@ -37,14 +43,14 @@ export default async function runCompletion(
   const apiToken = await context?.secrets.get("apiToken");
 
   let endpoint = ""
-  try{
+  try {
     new URL(modelIdOrEndpoint);
     endpoint = modelIdOrEndpoint;
-  }catch(e){
+  } catch (e) {
     endpoint = `https://api-inference.huggingface.co/models/${modelIdOrEndpoint}`
 
     // if user hasn't supplied API Token yet, ask user to supply one
-    if(!apiToken && !didShowTokenWarning){
+    if (!apiToken && !didShowTokenWarning) {
       didShowTokenWarning = true;
       void window.showInformationMessage(`In order to use "${modelIdOrEndpoint}" through Hugging Face API Inference, you'd need Hugging Face API Token`,
         "Get your token"
@@ -76,7 +82,7 @@ export default async function runCompletion(
     "Content-Type": "application/json",
     "Authorization": "",
   };
-  if(apiToken){
+  if (apiToken) {
     headers.Authorization = `Bearer ${apiToken}`;
   }
 
@@ -86,11 +92,11 @@ export default async function runCompletion(
     body: JSON.stringify(data),
   });
 
-  if(!res.ok){
+  if (!res.ok) {
     console.error("Error sending a request", res.status, res.statusText);
     const FIVE_MIN_MS = 300_000;
     const showError = !errorShownDate[res.status] || Date.now() - errorShownDate[res.status] > FIVE_MIN_MS;
-    if(showError){
+    if (showError) {
       errorShownDate[res.status] = Date.now();
       await window.showErrorMessage(`HF Code Error: code - ${res.status}; msg - ${res.statusText}`);
     }
@@ -101,7 +107,7 @@ export default async function runCompletion(
   const generatedTextRaw = getGeneratedText(await res.json());
 
   let generatedText = generatedTextRaw;
-  if(generatedText.slice(0, inputs.length) === inputs){
+  if (generatedText.slice(0, inputs.length) === inputs) {
     generatedText = generatedText.slice(inputs.length);
   }
   const regexToClear = new RegExp([...stopTokens, ...tokensToClear].map(token => token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|'), 'g');
@@ -125,7 +131,7 @@ export default async function runCompletion(
   return result;
 }
 
-function getGeneratedText(json: any): string{
+function getGeneratedText(json: any): string {
   return json?.generated_text ?? json?.[0].generated_text ?? "";
 }
 

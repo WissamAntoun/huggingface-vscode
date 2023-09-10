@@ -48,6 +48,12 @@ export default async function textListener({
   if (!change) {
     return;
   }
+
+  // check if the document is a latex document
+  if (document.languageId !== "latex") {
+    return;
+  }
+
   const currentTextPosition = getCurrentPosition(change);
   if (!completionIsAllowed(document, currentTextPosition)) {
     return;

@@ -1,5 +1,5 @@
 {
-  "publisher": "HuggingFace",
+  "publisher": "HuggingFace-Custom",
   "name": "huggingface-vscode-latexonly",
   "version": "0.0.39",
   "displayName": "HF Code Autocomplete",
@@ -301,11 +301,6 @@
   },
   "lint-staged": {
     "*.{ts,js,css,md}": "prettier --write src/"
-  },
-  "__metadata": {
-    "id": "75da638c-c45a-44ea-aa3b-8570a3559810",
-    "publisherDisplayName": "TabNine",
-    "publisherId": "1924b661-7c19-45d9-9800-edeb32848fd7",
-    "isPreReleaseVersion": false
   }
+
 }
